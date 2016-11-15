@@ -35,6 +35,11 @@ class MonitorPool:
 
 	def handle_change(self, thread_name, check_id, check_name, lock_uid, status, check_result):
 		if status == 'offline':
+			import subprocess
+			googleResult = subprocess.Popen(['ping', 'ipv4.google.com', '-c', '3', '-w', '3'], stdout=subprocess.PIPE).stdout.read()
+			if '100% packet loss' in googleResult:
+				print "What?! Google down? Aborting alert sending as it seems like the monitor host has no connectivity"
+				return
 			updown = 'down'
 		elif status == 'online':
 			updown = 'up'
